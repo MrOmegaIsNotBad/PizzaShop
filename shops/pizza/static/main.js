@@ -4,161 +4,99 @@ import * as ldb from "./localdb.js";
 function view_product_list() {
     server.get_products_list().then(product_list => {
         const products_container = document.querySelector('#product-container');
-        
-        for (var i=0; i < product_list.length; i++) {
-            
-        }
 
-        product_list.forEach(product => {
-            products_container.innerHTML += `
-            <div class="product">
-                <img src="${product["image"]}">
-                <h3>${product["name"]}</h3>
-                <p>${product["description"]}</p>
-                <h3 class="price">${product["price"]} UAH</h3>
-                <div class="order_bar">
-                    <button class="add" onclick="product_basket_add_remove(this, 'add', '${product["id"]}', '${product["name"]}', '${product["price"]}')">+</button><h2 class="count">0</h2><button class="remove" onclick="product_basket_add_remove(this, 'remove', '${product["id"]}', '${product["name"]}', '${product["price"]}')">-</button>
-                </div>
-            </div>
-            `
-        });
+        ldb.get(DB, 'filters_ingradient_active').then(data => {
+            var ingredients_list = [];
+            data.forEach(ingredient => {
+                ingredients_list.push(ingredient['ingredient']);
+            });
 
+            for (var i=0; i < product_list.length; i++) {
 
-    });
-}
+                if (ingredients_list.length > 0 && product_list[i]['ingredients'].length == 0) {
+                    delete product_list[i];
+                    continue;
+                }
 
-/*
-function view_filters() {
-    server.get_filters_list().then(filters_list => {
+                if ( !ingredients_list.every(e => product_list[i]['ingredients'].includes(e)) ) {
+                    delete product_list[i];
+                }
+            }
 
-        const rldb = indexedDB.open('db', 1);
-        rldb.onsuccess = (event) => {
-            const db = event.target.result;
-            const transaction = db.transaction(['filters_ingradient_active'], 'readonly');
-            const ingredients = transaction.objectStore('filters_ingradient_active');
-
-            const get_ingredients_list = ingredients.getAll();
-            get_ingredients_list.onsuccess = function(event) {
-                var ingredients_list = [];
-                get_ingredients_list.result.forEach(ingredient => {
-                    ingredients_list.push(ingredient['ingredient']);
-                });
-
-                const ingredients_checkboxes = document.querySelector('#filter-ingredients-checkboxes');
-                filters_list['ingredients'].forEach(ingredient => {
-                    var checked = 'unchecked';
-                    if (ingredients_list.includes(ingredient)) {
-                        checked = 'checked';
+            ldb.get(DB, 'basket').then(data => {
+                var template = '';
+                product_list.forEach(product => {
+                    var count = 0;
+                    var p = data.filter(item => item['id'] === product['id']);
+                    if (p.length > 0) {
+                        count = p[0]['qty'];
                     }
-                    
-                    ingredients_checkboxes.innerHTML += `
-                    <label class="custom-checkbox">
-                        <input class="checkbox-filter-ingredients" type="checkbox", name="${ingredient}" ${checked}>
-                        <span class="checkbox"></span>
-                        <span class="checkbox-label-text">${ingredient}</span>
-                    </label>
+                    template += `
+                    <div class="product">
+                        <img src="${product["image"]}">
+                        <h3>${product["name"]}</h3>
+                        <p>${product["description"]}</p>
+                        <h3 class="price">${product["price"]} UAH</h3>
+                        <div class="order_bar">
+                            <button class="add" onclick="product_basket_add_remove(this, 'add', '${product["id"]}', '${product["name"]}', '${product["price"]}')">+</button><h2 class="count">${count}</h2><button class="remove" onclick="product_basket_add_remove(this, 'remove', '${product["id"]}', '${product["name"]}', '${product["price"]}')">-</button>
+                        </div>
+                    </div>
                     `
                 });
-            }
-        }
+                products_container.innerHTML = template;
+            });
+
+        });
     });
 }
-*/
 
 function view_filters() {
     server.get_filters_list().then(filters_list => {
         ldb.get(DB, 'filters_ingradient_active').then(data => {
-                var ingredients_list = [];
-                data.forEach(ingredient => {
-                    ingredients_list.push(ingredient['ingredient']);
-                });
+            var ingredients_list = [];
+            data.forEach(ingredient => {
+                ingredients_list.push(ingredient['ingredient']);
+            });
 
-                const ingredients_checkboxes = document.querySelector('#filter-ingredients-checkboxes');
-                filters_list['ingredients'].forEach(ingredient => {
-                    var checked = 'unchecked';
-                    if (ingredients_list.includes(ingredient)) {
-                        checked = 'checked';
-                    }
-                    
-                    ingredients_checkboxes.innerHTML += `
-                    <label class="custom-checkbox">
-                        <input class="checkbox-filter-ingredients" type="checkbox", name="${ingredient}" ${checked}>
-                        <span class="checkbox"></span>
-                        <span class="checkbox-label-text">${ingredient}</span>
-                    </label>
-                    `
-                });
+            const ingredients_checkboxes = document.querySelector('#filter-ingredients-checkboxes');
+            filters_list['ingredients'].forEach(ingredient => {
+                var checked = 'unchecked';
+                if (ingredients_list.includes(ingredient)) {
+                    checked = 'checked';
+                }
+                
+                ingredients_checkboxes.innerHTML += `
+                <label class="custom-checkbox">
+                    <input class="checkbox-filter-ingredients" type="checkbox", name="${ingredient}" ${checked}>
+                    <span class="checkbox"></span>
+                    <span class="checkbox-label-text">${ingredient}</span>
+                </label>
+                `
+            });
             
         });
     });
 }
 
-
-
-
-/*
-function filters_apply () {
-    const currentUrl = new URL(window.location);
-    currentUrl.search = '';
-    window.history.replaceState({}, '', currentUrl);
-
-    const newUrl = new URL(window.location);
-
-    let checkboxes = document.getElementsByClassName('checkbox-filter-ingredients');
-
-    ingredients = [];
-    for (var i=0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) { 
-            ingredients.push(checkboxes[i].name)
-        }
-    }
-
-    if (ingredients.length > 0) {
-        const ingredientsParam = encodeURIComponent(ingredients.join('+'));
-        newUrl.searchParams.set('ingredients', ingredientsParam);
-    }
-
-    window.history.pushState({}, '', newUrl);
-
-    sleep(500).then(() => { window.location.reload(); });
-}
-*/
-
-
-
-
-
 function filters_apply () {
     let checkboxes = document.getElementsByClassName('checkbox-filter-ingredients');
 
-    const rldb = indexedDB.open('db', 1);
+    ldb.get(DB, 'filters_ingradient_active').then(ingredients_list => {
+        ingredients_list.forEach(item => {
+            ldb.remove(DB, 'filters_ingradient_active', item.ingredient);
+            //console.log('Remove Filter:', item.ingredient);
+        });
 
-    rldb.onsuccess = (event) => {
-        const db = event.target.result;
-        const transaction = db.transaction(['filters_ingradient_active'], 'readwrite');
-        const ingredients = transaction.objectStore('filters_ingradient_active');
-
-        const get_ingredients_list = ingredients.getAll();
-        get_ingredients_list.onsuccess = function(event) {
-            const ingredients_list = get_ingredients_list.result; 
-
-            ingredients_list.forEach(item => {
-                ingredients.delete(item.ingredient);
-                //console.log('Remove Filter:', item.ingredient);
-            });
-
-            for (var i=0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) { 
-                    ingredients.add({'ingredient':checkboxes[i].name});
-                    //console.log('Add Filter:', checkboxes[i].name);
-                }
+        for (var i=0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) { 
+                ldb.add(DB, 'filters_ingradient_active', {'ingredient':checkboxes[i].name});
+                //console.log('Add Filter:', checkboxes[i].name);
             }
         }
-    }
+        view_product_list();
+    });
 }
 window.filters_apply = filters_apply;
-
-
 
 function product_basket_add_remove (button, action, product_id, product_name, product_price) {
     console.log(action, product_id, product_name, product_price);
@@ -168,40 +106,29 @@ function product_basket_add_remove (button, action, product_id, product_name, pr
     const countElement = orderBar.querySelector('.count');
     let count = parseInt(countElement.textContent);
 
-    const rldb = indexedDB.open('db', 1);
-
-    rldb.onsuccess = (event) => {
-        const db = event.target.result;
-        const transaction = db.transaction(['basket'], 'readwrite');
-        const basket = transaction.objectStore('basket');
-
-        const get_product = basket.get(parseInt(product_id));
-        get_product.onsuccess = function() {
-            const product = get_product.result;
-            if (action === 'add') { 
-                if (product) {
-                    basket.put( {'id':parseInt(product_id), 'name':product_name, 'price':parseFloat(product_price), 'qty':product['qty']+1 } );
-                } else {
-                    basket.put( {'id': parseInt(product_id), 'name': product_name, 'price': parseFloat(product_price), 'qty': 1 } );
-                }
-                count += 1;
-                countElement.textContent = count;
-            } else if (action === 'remove') {
-                if (product) {
-                    if (product['qty'] > 1) {
-                        basket.put( {'id':parseInt(product_id), 'name':product_name, 'price':parseFloat(product_price), 'qty':product['qty']-1 } );
-                        count -= 1;
-                    } else {
-                        count = 0;
-                        basket.delete(parseInt(product_id));
-                    }
-                }
-                countElement.textContent = count;
+    ldb.get(DB, 'basket', parseInt(product_id)).then(product => { 
+        if (action === 'add') { 
+            if (product) {
+                ldb.add(DB, 'basket', {'id':parseInt(product_id), 'name':product_name, 'price':parseFloat(product_price), 'qty':product['qty']+1 } );
+            } else {
+                ldb.add(DB, 'basket', {'id': parseInt(product_id), 'name': product_name, 'price': parseFloat(product_price), 'qty': 1 } );
             }
-        
+            count += 1;
+            countElement.textContent = count;
+        } else if (action === 'remove') {
+            if (product) {
+                if (product['qty'] > 1) {
+                    ldb.add(DB, 'basket', {'id':parseInt(product_id), 'name':product_name, 'price':parseFloat(product_price), 'qty':product['qty']-1 } );
+                    count -= 1;
+                } else {
+                    count = 0;
+                    ldb.remove(DB, 'basket', parseInt(product_id));
+                }
+            }
+            countElement.textContent = count;
         }
         basket_update();
-    }
+    }); 
 }
 window.product_basket_add_remove = product_basket_add_remove;
 
@@ -253,7 +180,7 @@ ldb.set(DB, {
 
 view_filters();
 view_product_list();
-//basket_update();
+basket_update();
 
 
 document.addEventListener('DOMContentLoaded', () => {
