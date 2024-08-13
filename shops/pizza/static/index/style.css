@@ -233,6 +233,7 @@ button:hover {
     z-index: 2;
     top: -100%;
     right:5px;
+    overflow: hidden;
     /*
     left: 50%;
     top: 50%;
@@ -262,6 +263,10 @@ button:hover {
     height: 60px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
+.floating-basket .clear-button {
+    position: absolute;
+    left: 2%;
+}
 .floating-basket .close-button {
     position: absolute;
     right: 2%;
@@ -283,9 +288,10 @@ button:hover {
 .floating-basket .product {
     display: flex;
     flex-direction: row;
-    gap:5px;
-    font-size: 20px;
+    gap: 5px;
+    font-size: 18px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    align-items: center; 
 }
 .floating-basket .product .name {
     overflow: hidden;
@@ -294,24 +300,49 @@ button:hover {
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     display: -webkit-box;
-    max-width: 90%;
 }
 .floating-basket .product .quantity {
-    position: relative;
+    max-width: 60%; 
     font-weight: 600;
 }
+.floating-basket .product .price {
+    margin-left: auto; 
+    font-weight: 600;
+}
+
 .floating-basket .area-bottom {
     display: flex;
+    flex-direction: column;
     position: relative;
     justify-content: center;
     align-items: center; 
     text-align: center;
-    height: 12%;
+    height: 20%;
+    margin-bottom: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+.floating-basket .all-label-price {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 600; 
+    font-size: 20px;
+    margin: 10px 10px 0px 10px;
+}
+.floating-basket .all-label-price .price {
+    margin: 10px 10px 10px 10px ;
 }
 .floating-basket .order-button {
     width: 96%;
     height: 73%;
     font-size: 18px;
+    margin-bottom: 10px;
+}
+.floating-basket .order-button {
+    width: 96%;
+    height: 73%;
+    font-size: 18px;
+    margin-bottom: 10px;
 }
 
 

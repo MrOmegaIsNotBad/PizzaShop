@@ -1,8 +1,9 @@
-import * as server from "./server.js";
-import * as ldb from "./localdb.js";
+import * as server from "../server.js";
+import * as ldb from "../localdb.js";
 
 function view_product_list() {
-    server.get_products_list().then(product_list => {
+    products_list.then(data => {
+        var product_list = [...data];
         const products_container = document.querySelector('#product-container');
 
         ldb.get(DB, 'filters_ingradient_active').then(data => {
@@ -12,12 +13,10 @@ function view_product_list() {
             });
 
             for (var i=0; i < product_list.length; i++) {
-
                 if (ingredients_list.length > 0 && product_list[i]['ingredients'].length == 0) {
                     delete product_list[i];
                     continue;
                 }
-
                 if ( !ingredients_list.every(e => product_list[i]['ingredients'].includes(e)) ) {
                     delete product_list[i];
                 }
@@ -132,31 +131,37 @@ function product_basket_add_remove (button, action, product_id, product_name, pr
 }
 window.product_basket_add_remove = product_basket_add_remove;
 
-
 function basket_update() {
-    const rldb = indexedDB.open('db', 1);
+    ldb.get(DB, 'basket').then(product_list => {
+        const products_container = document.querySelector('#basket-product-list');
+        var template = '';
+        var all_price = 0;
+        product_list.forEach(product => {
+            template += `
+                <div class="product">
+                    <p class="name">${product["name"]}</p>
+                    <p class="quantity">x${product["qty"]}</p><br>
+                    <p class="price">${product["price"]*product["qty"]} UAH</p>
+                </div>
+            `;
+            all_price += product["price"]*product["qty"];
+        });
+        products_container.innerHTML = template;
 
-    rldb.onsuccess = (event) => {
-        const db = event.target.result;
-        const transaction = db.transaction(['basket'], 'readonly');
-        const basket = transaction.objectStore('basket');
-        const get_product_list = basket.getAll();
-        
-        get_product_list.onsuccess = function() {
-            const product_list = get_product_list.result; 
-
-            const products_container = document.querySelector('#basket-product-list');
-            products_container.innerHTML = "";
-            product_list.forEach(product => {
-                products_container.innerHTML += `
-                    <div class="product">
-                        <p class="name">${product["name"]}</p>
-                        <p class="quantity">x${product["qty"]}</p>
-                    </div>`;
-            });
-        }
-    }
+        document.getElementById('basket-all-price').innerText = all_price;
+    });
 }
+function basket_clear() {
+    ldb.get(DB, 'basket').then(product_list => {
+        product_list.forEach(product => {
+            ldb.remove(DB, 'basket', product['id']);
+        });
+        basket_update();
+        view_product_list();
+    });
+}
+window.basket_clear = basket_clear;
+
 
 const DB = ldb.open('db', 1);
 ldb.set(DB, {
@@ -176,6 +181,7 @@ ldb.set(DB, {
     }
 });
 
+const products_list = server.get_products_list();
 
 
 view_filters();
@@ -201,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const basket_window = document.getElementById('floating-basket');
     const basket_button = document.getElementById('header-basket-button');
     const basket_close_button = document.getElementById('floating-basket-header-close-button');
-    const basket_order_button = document.getElementById('floating-basket-header-order-button');
+    const basket_order_button = document.getElementById('floating-basket-order-button');
 
     basket_button .addEventListener('click', () => {
         basket_window.classList.toggle('floating-basket-show');

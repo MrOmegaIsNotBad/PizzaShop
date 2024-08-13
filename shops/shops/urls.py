@@ -26,7 +26,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="index"),
 
+    path('login/', views.login, name="login"),
+    path('register/', views.register, name="register"),
+    path('logout/', views.logout, name="logout"),
+
+
     path('get-products-list/', views.get_products_list, name='get-products-list'),
-    path('get_filters_list/', views.get_filters_list, name='get-filters-list'),
+    path('get-filters-list/', views.get_filters_list, name='get-filters-list'),
+    
+    path('push-order/', views.push_order, name='push-order'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

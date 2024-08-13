@@ -1,14 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template import loader
 from django.views.decorators.csrf import ensure_csrf_cookie
-
-from .models import *
 from django.db.models import *
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import auth
 
 from urllib.parse import unquote
 import json
+
+from .models import *
+from .forms import *
+
 
 # Create your views here.
 '''
@@ -62,6 +66,44 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+@ensure_csrf_cookie
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('/login/')
+        else:
+            form = {
+                'username': 'Имя пользователя может иметь не более 150 символов. Только буквы, цифры и символы @/./+/-/_.',
+                'password': 'Ваш пароль должен содержать как минимум 8 символов и не может состоять только из цифр.'
+            }
+    else:
+        form = ""
+    return render(request, 'register.html', {'form': form})
+
+@ensure_csrf_cookie
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth.login(request, user)
+            return redirect('/')
+        else:
+            form = "Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут быть чувствительны к регистру."
+    else:
+        form = ""
+    return render(request, 'login.html', {'form': form})
+
+@ensure_csrf_cookie
+def logout(request):
+    logout(request)
+    return redirect('login')
 
 def get_products_list(request):
     if request.method in ['POST', 'GET']:
@@ -97,6 +139,18 @@ def get_filters_list(request):
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+def push_order(request):
+    if request.method in ['POST', 'GET']:
+        try:
+            request_data = json.loads(request.body)
+            
+            return JsonResponse({'status': 'success'}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
 
 
 '''

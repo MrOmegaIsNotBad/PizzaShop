@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --bg: black;
+    --fg: white;
+    --hover-bg: white;
+    --hover-fg: black;
+    --active-bg: white;
+    --active-fg: black;
+    --inactive-bg: #5d5d5d; 
+}
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+
+    /*
+    -webkit-touch-callout: none; 
+    -webkit-user-select: none; 
+     -khtml-user-select: none; 
+       -moz-user-select: none;
+        -ms-user-select: none; 
+            user-select: none;
+    */
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--fg);
+    zoom:1.0;
+
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin: 5px;
+}
+
+.custom-checkbox [type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox .checkbox {
+    display: inline-block;
+    min-width: 20px;
+    min-height: 20px;
+    background-color: transparent;
+    border: 1px solid var(--fg);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.custom-checkbox .checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+    width: 12.5px;
+    height: 12.5px;
+    background-color: var(--active-bg);
+    border-radius: 2px;
+    top: 3.6px;
+    left: 3.6px;
+}
+
+.custom-checkbox [type="checkbox"]:checked + .checkbox:after {
+    display: block;
+}
+
+
+.custom-checkbox .checkbox-label-text {
+    margin-left: 10px;
+}
+
+button {
+    background-color: var(--bg);
+    color: var(--fg);
+    padding: 10px 10px;
+    font-size: 18px;
+    border: 1px solid var(--fg);
+    border-radius: 0.8em;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--active-bg);
+    color: var(--active-fg);
+}
+
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    position: fixed;
+    max-width: 100%;
+    max-height: 100;
+    width: 350px;
+    padding: 50px;
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.5em;
+    transform: translateX(-50%) translateY(-50%);
+}
+.container .item {
+    display: grid;
+    text-align: left;
+    margin-top: 15px;
+}
+.container .item label {
+    margin-bottom: 5px;
+}
+
+.container .item input {
+    background-color: var(--bg);
+    color: var(--fg);
+    padding: 12px 14px;
+    font-size: 18px;
+    border: 1px solid var(--inactive-bg);
+    outline: none;
+    border-radius: 1em;
+}
+
+.container button {
+    margin-top: 10px;
+}
+
+.container .warning p:not(:empty) {
+    text-align: left;
+    padding: 10px;
+    background-color: rgba(255, 0, 0, 0.3);
+    border-radius: 1em;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
