@@ -37,7 +37,7 @@ export function send_data_on_server (endpoint, data) {
     });
 }
 
-
+/*
 export function login(csrf_token, username, password) {
     return fetch('/login/', {
         method: 'POST',
@@ -77,9 +77,10 @@ export function register(username, password) {
         return null;
     });
 }
+*/
 
 export function get_products_list() {
-    return fetch('/get-products-list/', {
+    return fetch('/api/get-products-list/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ export function get_products_list() {
 }
 
 export function get_filters_list() {
-    return fetch('/get-filters-list/', {
+    return fetch('/api/get-filters-list/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -106,6 +107,57 @@ export function get_filters_list() {
     .then(data => data.result)
     .catch(error => {
         console.error('Error fetching filters list:', error);
+        return null; 
+    });
+}
+
+export function get_orders_by_user_id (user_id) {
+    return fetch('/api/get-orders-by-user-id/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({'user_id': user_id}),
+    })
+    .then(response => response.json())
+    .then(data => data.result)
+    .catch(error => {
+        console.error('Error fetching orders list:', error);
+        return null; 
+    });
+}
+
+export function push_order(order) {
+    return fetch('/api/push-order/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(order),
+    })
+    .then(response => response.json())
+    .then(data => data.result)
+    .catch(error => {
+        console.error('Error fetching order:', error);
+        return null; 
+    });
+}
+
+export function user_detail_change(field) {
+    return fetch('/api/user-detail-change/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(field),
+    })
+    .then(response => response.json())
+    .then(data => data.result)
+    .catch(error => {
+        console.error('Error fetching order:', error);
         return null; 
     });
 }

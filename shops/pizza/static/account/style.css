@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --bg: black;
+    --fg: white;
+    --hover-bg: white;
+    --hover-fg: black;
+    --active-bg: white;
+    --active-fg: black;
+    --inactive-bg: #5d5d5d; 
+}
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--fg);
+    zoom:1.0;
+
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin: 5px;
+}
+
+.custom-checkbox [type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox .checkbox {
+    display: inline-block;
+    min-width: 20px;
+    min-height: 20px;
+    background-color: transparent;
+    border: 1px solid var(--fg);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.custom-checkbox .checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+    width: 12.5px;
+    height: 12.5px;
+    background-color: var(--active-bg);
+    border-radius: 2px;
+    top: 3.6px;
+    left: 3.6px;
+}
+
+.custom-checkbox [type="checkbox"]:checked + .checkbox:after {
+    display: block;
+}
+
+
+.custom-checkbox .checkbox-label-text {
+    margin-left: 10px;
+}
+
+button {
+    background-color: var(--bg);
+    color: var(--fg);
+    padding: 10px 10px;
+    font-size: 16px;
+    border: 1px solid var(--fg);
+    border-radius: 0.8em;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--active-bg);
+    color: var(--active-fg);
+    border: 1px solid var(--fg);
+}
+
+.header {
+    display: flex;            
+    align-items: center;   
+    justify-content: center; 
+    padding: 5px;            
+    border-bottom: 1px solid var(--inactive-bg);
+}
+.header .back {
+    position: absolute;
+    left: 10px;
+    text-decoration: none;
+}
+
+.container {
+    margin: 0px 20%;
+}
+.container .account {
+    margin: 10px 10px;
+    padding: 0px 15px;
+    border: 1px solid var(--inactive-bg);
+    border-radius: 1.5em;
+}
+.container .account .item {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    align-items: center;
+}
+.container .account .item button {
+    margin-left: auto;
+}
+.container .orders {
+    margin: 10px 10px;
+    padding: 0px 15px;
+    border: 1px solid var(--inactive-bg);
+    border-radius: 1.5em;
+}
+.container .orders .item {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    align-items: center; 
+}
+.container .orders .item .name {
+    overflow: hidden;
+    white-space: nowrap;
+}
+.container .orders .item .qty {
+    max-width: 60%;
+    font-weight: 600;
+}
+.container .orders .item .status {
+    margin-left: auto;
+}
+
+.field-changer {
+    display: none;
+    position: fixed;
+    flex-direction: column;
+    z-index: 1;
+    left: 50%;
+    top: 25%;
+    transform: translateY(-25%) translateX(-50%);
+    text-align: center;
+    width: 300px;
+    height: auto;
+    background-color: var(--bg);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 1.5em;
+    box-shadow: 0px 0px 50px rgba(255, 255, 255, 0.25);
+}
+.field-changer .title {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center; 
+    text-align: center;
+    height: 5px;
+}
+.field-changer .close {
+    position: absolute;
+    right: 10px;
+    padding: 5px 10px;
+}
+.field-changer .body {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+.field-changer input {
+    padding: 10px;
+    font-size: 18px;
+    background-color: var(--bg);
+    color: var(--fg);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 0.7em;
+    margin-bottom:15px;
+}
+
+@media (orientation: portrait) {
+
+.container {
+    margin: 0px;
+}
+
+}

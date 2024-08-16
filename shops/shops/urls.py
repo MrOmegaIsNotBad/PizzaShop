@@ -24,16 +24,19 @@ from pizza import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     path('', views.index, name="index"),
+    path('account/', views.account, name="account"),
 
     path('login/', views.login, name="login"),
     path('register/', views.register, name="register"),
     path('logout/', views.logout, name="logout"),
 
-
-    path('get-products-list/', views.get_products_list, name='get-products-list'),
-    path('get-filters-list/', views.get_filters_list, name='get-filters-list'),
+    path('api/get-products-list/', views.get_products_list, name='get-products-list'),
+    path('api/get-filters-list/', views.get_filters_list, name='get-filters-list'),
+    path('api/get-orders-by-user-id/', views.get_orders_by_user_id, name='get-orders-by-user-id'),
     
-    path('push-order/', views.push_order, name='push-order'),
+    path('api/push-order/', views.push_order, name='push-order'),
+    path('api/user-detail-change/', views.user_detail_change, name='user-detail-change'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

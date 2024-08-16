@@ -13,5 +13,8 @@ class PizzaAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer_name', 'product', 'quantity', 'order_date')
+    list_display = ('user_id', 'product', 'quantity', 'order_date')
 
+@admin.register(UserDetail)
+class UserDetailAdmin (admin.ModelAdmin):
+    list_display = ('user_id', 'username')

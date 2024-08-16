@@ -34,6 +34,7 @@ body {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    top:100px;
 }
 
 .custom-checkbox {
@@ -102,7 +103,7 @@ button:hover {
 
 
 
-
+/*
 .header_bar {
     background-color: transparent;
     backdrop-filter: blur(10px);
@@ -110,27 +111,33 @@ button:hover {
     text-align: center;
     padding: 4px 4px 4px 4px;
     border-bottom: 1px solid var(--inactive-bg);
-    display: flex; /* Add this */
-    justify-content: space-between; /* Add this */
+    display: flex; 
+    justify-content: space-between; 
 }
+*/
 
 .header_bar {
     display: flex;
+    position: fixed;
+    z-index: 2;
     align-items: center;
-    justify-content: center; /* Центрирует содержимое по горизонтали */
-    padding: 10px; /* Отступы вокруг содержимого */
-    position: relative;
-    background-color: var(--bg); /* Цвет фона для визуализации */
+    justify-content: center;
+    width: 100%;
+    padding: 5px 0px; 
+    background-color: var(--bg);
+    background-color: rgba(0,0,0,0.75);
+    backdrop-filter: blur(30px);
+    border-bottom: 1px solid var(--inactive-bg);
 }
 
 .header_bar .logo {
     position: absolute;
-    left: 10px; /* Отступ от левого края контейнера */
+    left: 10px; 
 }
 
 .header_bar .logo img {
-    height: 2.8em;
-    width: 2.8em;
+    height: 2.5em;
+    width: 2.5em;
 }
 
 .header_bar .search_bar {
@@ -172,17 +179,14 @@ button:hover {
     border: 1px solid var(--fg);
 }
 
-.header_bar .basket {
+.header_bar .user {
     position: absolute;
     right: 10px;
-    background-color: transparent;
-    padding: 0px;
-    border: none;
 }
 
-.header_bar .basket img {
-    height: 2.8em;
-    width: 2.8em;
+.header_bar .user img {
+    height: 2.5em;
+    width: 2.5em;
 }
 
 
@@ -217,6 +221,7 @@ button:hover {
     backdrop-filter: blur(0.4em);
     background-color: rgba(0,0,0,0.45);
     border-radius: 0.5em;
+    top:5%;
 }
 .banner h1 span {
     color: transparent;
@@ -225,14 +230,44 @@ button:hover {
     font-family: sans-serif;
 }
 
+.floating-buttons {
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+}
+.floating-buttons button {
+    margin: 3px;
+    background-color: rgba(0,0,0,0.60);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.5em;
+    fill: var(--fg);
+}
+.floating-buttons button:hover {
+    background-color: var(--active-bg);
+    fill: var(--active-fg);
+}
+.floating-buttons svg {
+    width: 2.5em;
+    height: 2.5em;
+}
+.filter-floating-button {
+    display: none;
+}
+.floating-basket-button {
+    display: none;
+}
 
 .floating-basket {
     display: flex;
     position:fixed;
     flex-direction: column;
     z-index: 2;
-    top: -100%;
-    right:5px;
+    bottom: -100%;
+    right: 75px;
     overflow: hidden;
     /*
     left: 50%;
@@ -249,10 +284,11 @@ button:hover {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 1.5em;
-    transition: opacity 0.7s ease, top 0.7s ease;
+    transition: opacity 0.7s ease, bottom 0.7s ease;
 }
 .floating-basket-show {
-    top: 69px;
+    bottom: 75px;
+    display: flex;
 }
 .floating-basket .floating-basket-header {
     display: flex;
@@ -345,7 +381,6 @@ button:hover {
     margin-bottom: 10px;
 }
 
-
 .container {
     display: flex;
 }
@@ -370,6 +405,7 @@ button:hover {
     display: grid;
 }
 
+/*
 .filter-floating-button {
     display: none;
     background-color: rgba(0,0,0,0.60);
@@ -390,7 +426,7 @@ button:hover {
     width: 2.5em;
     height: 2.5em;
 }
-
+*/
 .product-container {
     flex: 3;
     margin: 0px 20px;
@@ -487,8 +523,6 @@ button:hover {
     border-radius: 0em 1em 1em 0em;
 }
 
-
-
 @media (orientation: portrait) {
 html {
     transform-origin: top left;
@@ -504,6 +538,7 @@ html {
 .banner div {
     max-width: 60%;
     backdrop-filter: blur(0.25em);
+    font-size: 140%;
 }
 
 .floating-basket {

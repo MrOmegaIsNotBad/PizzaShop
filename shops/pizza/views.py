@@ -6,6 +6,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.db.models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import auth
+from django.contrib.auth.models import User
 
 from urllib.parse import unquote
 import json
@@ -60,9 +61,19 @@ def index(request):
 def index(request):
     template = loader.get_template('index.html')
     ingredients = Ingredient.objects.all()
-    
+
     context = {
         'ingredients': ingredients,
+    }
+    return HttpResponse(template.render(context, request))
+
+@ensure_csrf_cookie
+def account(request):
+    template = loader.get_template('account.html')
+    user_detail = UserDetail.objects.filter(user_id=request.user.id)[0]
+    orders = Order.objects.filter(user_id=request.user.id)
+    context = {
+        'user_detail': user_detail,
     }
     return HttpResponse(template.render(context, request))
 
@@ -73,6 +84,16 @@ def register(request):
 
         if form.is_valid():
             form.save()
+            
+            user = User.objects.filter(username=request.POST['username']).values()
+            if len(user) > 0:
+                user = user[0]
+                UserDetail(
+                    user_id = user['id'],
+                    username = user['username'],
+                    email = user['email'],
+                ).save()
+            
             return redirect('/login/')
         else:
             form = {
@@ -140,17 +161,72 @@ def get_filters_list(request):
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
-
-def push_order(request):
+def get_orders_by_user_id(request):
     if request.method in ['POST', 'GET']:
         try:
             request_data = json.loads(request.body)
             
-            return JsonResponse({'status': 'success'}, status=200)
+            responce_data = {'orders': []}
+            orders = Order.objects.filter(user_id=request_data['user_id']).values()
+            for order in orders:
+                product = Product.objects.filter(id=order['product_id']).values()
+                if len(product) < 1:
+                    continue
+                product = product[0]
+                responce_data['orders'].append({
+                    'name': product['name'], 
+                    'qty': order['quantity'], 
+                    'status': order['status']
+                })
+
+            return JsonResponse({'status': 'success', 'result': responce_data}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
+
+def push_order(request):
+    if request.method in ['POST', 'GET']:
+        try:
+            if request.user.username != "":
+                request_data = json.loads(request.body)
+
+                for p in request_data['products']:
+                    Order(
+                        user_id = request.user.id,
+                        product = Product.objects.get(id=p['id']),
+                        quantity = p['qty'],
+                        status = "cooking",
+                    ).save()
+                
+                return JsonResponse({'status': 'success'}, status=200)
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Unknown user'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+def user_detail_change(request):
+    if request.method in ['POST', 'GET']:
+        try:
+            if request.user.username != "":
+                request_data = json.loads(request.body)
+
+                fields = detail = UserDetail.objects.all().values()
+                if len(fields) > 0:
+                    fields = fields[0]
+                    if request_data['field'] in fields.keys():
+                        detail = UserDetail.objects.get(user_id=request.user.id)
+                        setattr(detail, request_data['field'], request_data['value'])
+                        detail.save()
+                        return JsonResponse({'status': 'success'}, status=200)
+                    else:
+                        return JsonResponse({'status': 'error', 'message': 'Unknown field'}, status=400)
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Unknown user'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
 '''

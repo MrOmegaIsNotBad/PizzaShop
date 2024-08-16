@@ -105,9 +105,9 @@ button:hover {
     flex-wrap: wrap;
     flex-direction: column;
     position: fixed;
+    width: 350px;
     max-width: 100%;
     max-height: 100;
-    width: 350px;
     padding: 50px;
     left: 50%;
     top: 50%;
@@ -139,6 +139,10 @@ button:hover {
 .container button {
     margin-top: 10px;
 }
+.container a {
+    text-decoration: none;
+    color: var(--fg);
+}
 
 .container .warning p:not(:empty) {
     text-align: left;
@@ -146,4 +150,12 @@ button:hover {
     background-color: rgba(255, 0, 0, 0.3);
     border-radius: 1em;
     border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@media (orientation: portrait) {
+
+.container {
+    max-width: 70%;
+}
+
 }

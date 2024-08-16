@@ -9,7 +9,6 @@ class Ingredient(models.Model):
         return self.name
 
 class Product(models.Model):
-    #product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField()
     ingredients = models.ManyToManyField(Ingredient)
@@ -20,13 +19,18 @@ class Product(models.Model):
         return self.name
 
 class Order(models.Model):
-    customer_name = models.CharField(max_length=100)
-    customer_email = models.EmailField()
+    user_id = models.IntegerField(null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     order_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50, default=None)
 
     def __str__(self):
-        return f'Order {self.id} by {self.customer_name}'
+        return f'Order {self.id} by {self.user_id}'
 
-
+class UserDetail(models.Model):
+    user_id = models.IntegerField(null=True)
+    username = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
+    address = models.CharField(max_length=200)

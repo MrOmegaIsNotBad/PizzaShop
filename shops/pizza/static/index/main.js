@@ -149,6 +149,14 @@ function basket_update() {
         products_container.innerHTML = template;
 
         document.getElementById('basket-all-price').innerText = all_price;
+
+        var floating_basket_button = document.getElementById('floating-basket-button');
+        if (product_list.length > 0) {
+            floating_basket_button.style.display = 'flex';
+        } else {
+            floating_basket_button.style.display = 'none';
+        }
+
     });
 }
 function basket_clear() {
@@ -161,6 +169,18 @@ function basket_clear() {
     });
 }
 window.basket_clear = basket_clear;
+
+function basket_order() {
+    ldb.get(DB, 'basket').then(product_list => {
+        var order = {'products':[]}; 
+        product_list.forEach(product => {
+            order['products'].push({'id': product['id'], 'qty': product['qty']});
+        });
+        server.push_order(order);
+        basket_clear();
+    });
+}
+window.basket_order = basket_order;
 
 
 const DB = ldb.open('db', 1);
@@ -190,7 +210,7 @@ basket_update();
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // floating filter 
+    // floating filter button 
     const floating_filter_button = document.getElementById('filter-floating-button');
     const filter_window = document.getElementById('filter-container');
     const filter_apply_button = document.getElementById('filter-apply-button');
@@ -203,10 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
         filter_window.classList.remove('filter-container-show');
     });
 
-    // floating basket
+    // floating basket button
     const basket_window = document.getElementById('floating-basket');
-    const basket_button = document.getElementById('header-basket-button');
+    const basket_button = document.getElementById('floating-basket-button');
     const basket_close_button = document.getElementById('floating-basket-header-close-button');
+    const basket_clear_button = document.getElementById('floating-basket-header-clear-button');
     const basket_order_button = document.getElementById('floating-basket-order-button');
 
     basket_button .addEventListener('click', () => {
@@ -215,10 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
     basket_close_button .addEventListener('click', () => {
         basket_window.classList.toggle('floating-basket-show');
     });
+    basket_clear_button .addEventListener('click', () => {
+        basket_window.classList.toggle('floating-basket-show');
+    });
     basket_order_button .addEventListener('click', () => {
         basket_window.classList.toggle('floating-basket-show');
     });
-
 
 });
 
