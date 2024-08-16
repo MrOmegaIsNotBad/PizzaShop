@@ -1,7 +1,9 @@
 import * as server from "../server.js";
 import * as ldb from "../localdb.js";
 
-function view_product_list() {
+function view_product_list(search=false) {
+    var search_value = document.getElementById('search-bar-input').value;
+
     products_list.then(data => {
         var product_list = [...data];
         const products_container = document.querySelector('#product-container');
@@ -19,6 +21,13 @@ function view_product_list() {
                 }
                 if ( !ingredients_list.every(e => product_list[i]['ingredients'].includes(e)) ) {
                     delete product_list[i];
+                }
+                if (search && search_value != "") {
+                    var name = product_list[i]['name'].toLowerCase();
+                    search_value = search_value.toLowerCase();
+                    if (!name.includes(search_value)) {
+                        delete product_list[i];
+                    }
                 }
             }
 
@@ -48,6 +57,7 @@ function view_product_list() {
         });
     });
 }
+window.view_product_list = view_product_list;
 
 function view_filters() {
     server.get_filters_list().then(filters_list => {
